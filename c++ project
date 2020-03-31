@@ -1,0 +1,203 @@
+#include<iostream>
+#include<string.h>
+#include<fstream>
+using namespace std;
+class departmentalstore{
+    char name[100], state,city, store,size,t,count;
+    public:
+    departmentalstore()
+    {
+
+    }
+    void setdata();
+    void showdata();//file handling function fstream
+    int storedata ();
+    void viewalldata();
+    void searchadata(char*);
+    void deletedata(char*);
+    void updatedata(char*);
+};
+void departmentalstore::setdata()
+{
+    cout<<"please enter the state and city to search stores:"<<endl;
+    cin>>state and city;
+    cin.ignore();
+    cin.getline(name,40);
+    cin>> store;
+}
+void departmentalstore::showdata()
+{
+    cout<<"state and city:"<<state and city ;
+	cout<<"name :"<< store <<endl;
+}
+int departmentalstore::storedata()
+{
+    if (state and city==0&& store==0)
+    {
+        cout<<"\n data not inialize"<<endl;
+        return 0;
+    }
+    else {
+        ofstream fout;
+        fout.open("departmentalstore.txt",ios::app);
+        fout.write((char*)this,sizeof (*this));
+        fout.close();
+    }
+}
+void departmentalstore::viewalldata()
+{
+    ifstream fin;
+    fin.open("departmentalstore.txt",ios::in);
+    if(!fin)
+    {
+        cout<<"\nfile not found"<<endl;
+    }
+    else{
+        fin.read((char*)this,sizeof (*this));//READ data
+        while(!fin.eof())//end of file{
+            showdata();
+            cout<<endl;
+            fin.read((char*)this,sizeof (*this));
+        }
+        fin.close();
+    }
+
+void departmentalstore::searchadata(char*t) 
+{
+    int count=0;
+    ifstream fin;
+    fin.open("departmentalstore .txt",ios::in);
+    if(!fin)
+    {
+        cout<<"\nfile not found :"<<endl;
+    }
+    else {
+        fin.read((char*)this, sizeof (*this));
+        while(!fin.eof())
+        {
+            if(!strcmp(t,this->name))
+            {
+                showdata();
+                count ++;
+            }
+            fin.read ((char*)this, sizeof (*this));
+        }
+        if (count==0)
+        {
+            cout<<"data not found"<<endl;
+        }
+        fin.close();
+    }
+}
+void departmentalstore::deletedata(char*t)
+{
+    ifstream fin;
+    ofstream fout;
+    fin.open("departmentalstore.txt",ios::in);
+    if(!fin)
+    {
+        cout<<"\nfile not exist "<<endl;
+    }
+    else
+    {
+        fout.open("tempo.txt",ios::out);
+        fin.read((char*)this,sizeof(this));
+        while(!fin.eof())
+        {
+            if(strcmp(name,t))
+            {
+                fout.write((char*) this,sizeof (*this));
+            }
+            fin.read((char*)this,sizeof(*this));
+        }
+        fin.close();
+        fout.close();
+        remove("departmentalstore.txt");
+        rename("tempo.text","departmentalstore.txt");
+    }
+} void departmentalstore::updatedata(char*t)
+{
+    fstream file;
+    file.open("departmentalstore.txt",ios::in|ios::out|ios::ate);
+    file.seekg(0);
+    file.read((char*)this,sizeof (*this));
+    while(!file.eof())
+    {
+        if(!strcmp(t,name))
+        {
+            setdata();
+            file.seekp(file.tellp()-sizeof(*this));
+            file.write((char*)this,sizeof (*this));
+        }
+        file.read((char*)this,sizeof (*this));
+    }
+    file.close();
+}
+int menu()
+{   //creat a meanu
+    int choice;
+    cout<<"\t\t-------------------------------------";
+    cout<<"\n\t\t Departmental Store across the country"<<endl;
+    cout<<"\t\t-------------------------------------"<<endl;
+    cout<<"\n=======================================";
+    cout<<"\n\n\t 1.Insert Data";
+    cout<<"\n\n\t 2.viewalldata";
+    cout<<"\n\n\t 3.Search Data";
+    cout<<"\n\n\t 4.Delete Data";
+    cout<<"\n\n\t 5.Update Data";
+    cout<<"\n\n\t 6.Exit";
+    cout<<"\n\n\tEnter your choice:";
+    cout<<"\n\n===============\n";
+    cin>>choice;
+    return choice;
+}
+main(){
+     departmentalstore b1;
+    char name[20];
+    while(1)//infinite loop
+    {
+        system("cls");
+        switch(menu())
+        {
+            case 1:
+            b1.setdata();
+            b1.storedata();
+            cout<<"storedata successfully..."<<endl;
+            break;
+
+            case 2:
+            b1.viewalldata();
+            break;
+
+            case 3:
+            cout<<"tEnter the state and city for search data"<<endl;
+            cin.ignore();
+            cin.getline(name,40);
+            b1.searchadata(name);
+            break;
+
+            case 4:
+            cout<<"tEnter the state and city for delete"<<endl;
+            cin.ignore();
+            cin.getline(name,40);
+            b1.deletedata(name );
+            break;
+
+            case 5:
+            cout<<"Enter the tittle for Update"<<endl;
+            cin.ignore();
+            cin.getline(name,40);
+            b1.updatedata(name);
+            break;
+
+            case 6:
+            cout<<"\n Thank you for using this Application"<<endl;
+            system ("cls");
+            exit(0);
+            break;
+            default:
+            cout<<"Invalid input "<<endl;
+        }
+        system("pause");
+    }
+}
